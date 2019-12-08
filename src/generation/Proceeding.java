@@ -51,6 +51,9 @@ public class Proceeding {
             process = Runtime.getRuntime().exec(command);
             outcome = process.getErrorStream().read() == -1;
 
+        } catch (Exception ex) {
+            System.err.println(ex);
+
         } finally {
             if (process != null) {
                 process.destroyForcibly();

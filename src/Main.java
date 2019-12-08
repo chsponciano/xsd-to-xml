@@ -1,11 +1,16 @@
-import generation.Proceeding;
+import exception.ConfigurationException;
 import utils.Date;
+import utils.Validation;
 
 import java.io.File;
 
 public class Main {
     public static void main(String[] args) {
         try {
+            if (!Validation.thereIsXjcConfig()) {
+                throw new ConfigurationException();
+            }
+
             String pathFile = new File(".").getCanonicalPath() + "\\src\\test.xsd";
 
             generation.Proceeding gProceeding = generation.Proceeding.getInstance();

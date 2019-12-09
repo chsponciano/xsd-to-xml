@@ -1,6 +1,6 @@
 package type;
 
-import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
+import javax.xml.datatype.XMLGregorianCalendar;
 import utils.Formatting;
 
 import java.math.BigDecimal;
@@ -8,7 +8,7 @@ import java.math.BigInteger;
 
 public abstract class NativeJava {
 
-    public static Object getObject(String type) {
+    public static Object[] getObject(String type) throws IllegalAccessException, InstantiationException {
         if (type.contains("jaxb")) {
             return null;
         }
@@ -19,21 +19,21 @@ public abstract class NativeJava {
 
         switch (type) {
             case "String":
-                return new String("");
+                return new Object[]{ String.class, new String("") };
             case "BigInteger":
-                return new BigInteger(String.valueOf(0));
+                return new Object[]{ BigInteger.class, new BigInteger(String.valueOf(0)) };
             case "BigDecimal":
-                return new BigDecimal(String.valueOf(0));
+                return new Object[]{ BigDecimal.class, new BigDecimal(String.valueOf(0)) };
             case "Integer":
-                return new Integer(0);
+                return new Object[]{ Integer.class, new Integer(0) };
             case "int":
-                return new Integer(0);
+                return new Object[]{ int.class, 0 };
             case "byte":
-                return new Byte((byte) 0);
+                return new Object[]{ byte.class, (byte) 0 };
             case "Byte":
-                return new Byte((byte) 0);
+                return new Object[]{ Byte.class, new Byte((byte) 0) };
             case "XMLGregorianCalendar":
-                return new XMLGregorianCalendarImpl();
+                return new Object[]{ XMLGregorianCalendar.class, XMLGregorianCalendar.class.newInstance() };
             default:
                 return null;
         }

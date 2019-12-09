@@ -5,6 +5,9 @@ import utils.Formatting;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class JAXBConversion {
     private static JAXBConversion ourInstance;
@@ -35,7 +38,12 @@ public class JAXBConversion {
     private Class loadObjectFactory() throws IOException {
         ClassLoader parentClassLoader = ObjectFactoryLoader.class.getClassLoader();
         ObjectFactoryLoader classLoader = new ObjectFactoryLoader(parentClassLoader);
-        return classLoader.loadClass(Formatting.packageToPath(PACKAGE).concat("ObjectFactory.class"), PACKAGE);
+        return classLoader.loadClass(this.getUrlObjectFactory());
+    }
+
+    private URL getUrlObjectFactory() throws IOException {
+        String packageComplete = Formatting.packageToPath(PACKAGE).concat("ObjectFactory.class");
+        return Paths.get(packageComplete).toUri().toURL();
     }
 
     protected JAXBContext getContext() throws JAXBException {

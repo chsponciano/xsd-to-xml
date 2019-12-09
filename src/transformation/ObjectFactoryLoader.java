@@ -2,6 +2,7 @@ package transformation;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.net.URL;
 import java.nio.file.Paths;
 
 public class ObjectFactoryLoader extends ClassLoader {
@@ -9,15 +10,19 @@ public class ObjectFactoryLoader extends ClassLoader {
     private Integer data;
     private InputStream input;
     private ByteArrayOutputStream buffer;
+    private final String OBJECT_FACTORY;
 
     public ObjectFactoryLoader(ClassLoader parent) {
         super(parent);
+        this.OBJECT_FACTORY = JAXBConversion.PACKAGE.concat(".ObjectFactory");
     }
 
-    public Class<?> loadClass(String name, String packagePath) {
+    public Class<?> loadClass(URL path) {
+        Class loaded = null;
+
         try {
             this.buffer = new ByteArrayOutputStream();
-            this.input = Paths.get(name).toUri().toURL().openConnection().getInputStream();
+            this.input  = path.openConnection().getInputStream();
 
             if (this.input.available() != 0) {
 
@@ -31,12 +36,14 @@ public class ObjectFactoryLoader extends ClassLoader {
                 this.buffer.close();
                 this.data = null;
 
-                return defineClass(packagePath, classData, 0, classData.length);
+                loaded = defineClass(this.OBJECT_FACTORY, classData, 0, classData.length);
             }
+
         } catch (Exception ex) {
             ex.printStackTrace();
-        }
 
-        return null;
+        } finally {
+            return loaded;
+        }
     }
 }

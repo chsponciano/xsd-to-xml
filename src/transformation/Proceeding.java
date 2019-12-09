@@ -12,9 +12,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Proceeding {
+    public  static Method generationMethod;
     private static Proceeding ourInstance;
     private JAXBConversion jaxbConversion;
-    private Method generationMethod;
 
     private Proceeding() {
         this.jaxbConversion = JAXBConversion.getInstance();
@@ -29,7 +29,7 @@ public class Proceeding {
 
     public void run() throws Exception {
         Map<String, MirrorClass> map = this.getDataMap();
-        Object attributeObject = null;
+        Object[] attributeObject = null;
 
         for (Map.Entry<String, MirrorClass> current : map.entrySet()) {
             for (String attribute : current.getValue().getClassAttributes()) {
@@ -46,16 +46,22 @@ public class Proceeding {
             }
         }
 
-        System.out.println(this.generationMethod);
+        Object root = map.get(Formatting.className(Formatting.getLastName(generationMethod.getParameterTypes()[0].getName()))).getObject();
+        Object jaxbElement = generationMethod.invoke(this.jaxbConversion.getObjectFactory().newInstance(), root);
+        this.objectToXml(jaxbElement);
     }
 
-    private Object getAttributeObject(final Map<String, MirrorClass> map, String type) {
-        Object attributeObject = null;
+    private Object[] getAttributeObject(final Map<String, MirrorClass> map, String type) {
+        Object[] attributeObject = null;
 
         try {
+
             if ((attributeObject = NativeJava.getObject(type)) == null) {
-                attributeObject = map.get(Formatting.className(Formatting.getLastName(type))).getObject();
+                attributeObject = new Object[2];
+                attributeObject[1] = map.get(Formatting.className(Formatting.getLastName(type))).getObject();
+                attributeObject[0] = attributeObject[1].getClass();
             }
+
         } catch (Exception ex) {
             attributeObject = null;
 
@@ -76,7 +82,7 @@ public class Proceeding {
         String bufferName;
 
         for (Method current : jaxbConversion.getObjectFactory().getDeclaredMethods()) {
-            if (!Validation.isTheMethodGeneration(this.generationMethod, current)) {
+            if (!Validation.isTheMethodGeneration(current)) {
                 bufferName = Formatting.className(current.getName());
                 map.put(bufferName, new MirrorClass(bufferName, current.getReturnType()));
             }

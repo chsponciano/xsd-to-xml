@@ -40,10 +40,17 @@ public class MirrorClass {
         this.object = object;
     }
 
-    public void addAttributeObject(final String attributeName, final Object attributeObject)
+    public void addAttributeObject(final String attributeName, final Object[] attributeObject)
             throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        System.out.println(this.label + " | " + Formatting.setMethodName(attributeName)
+                + " | " + attributeObject);
+
+        if (attributeObject == null) {
+            return;
+        }
+
         this.type.getMethod(Formatting.setMethodName(attributeName),
-                new Class[] {attributeObject.getClass()}).invoke(this.object, attributeObject);
+                new Class[] {(Class) attributeObject[0]}).invoke(this.object, attributeObject[1]);
     }
 
     public String[] getClassAttributes() {

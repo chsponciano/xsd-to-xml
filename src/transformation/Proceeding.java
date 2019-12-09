@@ -1,12 +1,14 @@
 package transformation;
 
 import model.MirrorClass;
+import org.w3c.dom.Document;
 import type.NativeJava;
 import utils.Formatting;
 import utils.Validation;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.transform.dom.DOMResult;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +29,7 @@ public class Proceeding {
         return ourInstance;
     }
 
-    public void run() throws Exception {
+    public Document run() throws Exception {
         Map<String, MirrorClass> map = this.getDataMap();
         Object[] attributeObject = null;
 
@@ -48,7 +50,7 @@ public class Proceeding {
 
         Object root = map.get(Formatting.className(Formatting.getLastName(generationMethod.getParameterTypes()[0].getName()))).getObject();
         Object jaxbElement = generationMethod.invoke(this.jaxbConversion.getObjectFactory().newInstance(), root);
-        this.objectToXml(jaxbElement);
+        return this.objectToXml(jaxbElement);
     }
 
     private Object[] getAttributeObject(final Map<String, MirrorClass> map, String type) {
@@ -71,10 +73,12 @@ public class Proceeding {
         }
     }
 
-    private void objectToXml(Object object) throws JAXBException {
+    private Document objectToXml(Object object) throws JAXBException {
+        DOMResult domResult = new DOMResult();
         Marshaller jaxbMarshaller = jaxbConversion.getContext().createMarshaller();
         jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-        jaxbMarshaller.marshal(object, System.out);
+        jaxbMarshaller.marshal(object, domResult);
+        return (Document) domResult.getNode();
     }
 
     private Map<String, MirrorClass> getDataMap() throws InstantiationException, IllegalAccessException {

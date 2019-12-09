@@ -1,5 +1,7 @@
 import exception.ConfigurationException;
+import org.w3c.dom.Document;
 import utils.Date;
+import utils.Course;
 import utils.Validation;
 
 import java.io.File;
@@ -19,11 +21,17 @@ public class Main {
             System.out.println(Date.getLocalDateTime() + " - Iniciando geração das classes JAXB");
 
             if (gProceeding.run()) {
-                System.out.println(Date.getLocalDateTime() + " - Classes JAXB geradas com sucesso");
+                System.out.println(Date.getLocalDateTime() + " - Finalizado a geração das classes JAXB");
                 System.out.println(Date.getLocalDateTime() + " - Iniciando conversão das classes JAXB para XML");
 
                 transformation.Proceeding tProceeding = transformation.Proceeding.getInstance();
-                tProceeding.run();
+                Document xml = tProceeding.run();
+
+                //Example of how to traverse XML
+                //Course c = new Course();
+                //c.run(xml);
+
+                System.out.println(Date.getLocalDateTime() + " - Finalizado a conversão das classes JAXB para XML");
 
             } else {
                 System.err.println(Date.getLocalDateTime() + " - Erro na geração das classes JAXB");

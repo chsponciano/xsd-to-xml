@@ -3,7 +3,6 @@ package transformation;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.URL;
-import java.nio.file.Paths;
 
 public class ObjectFactoryLoader extends ClassLoader {
 

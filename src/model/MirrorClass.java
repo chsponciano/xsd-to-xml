@@ -42,9 +42,6 @@ public class MirrorClass {
 
     public void addAttributeObject(final String attributeName, final Object[] attributeObject)
             throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        System.out.println(this.label + " | " + Formatting.setMethodName(attributeName)
-                + " | " + attributeObject);
-
         if (attributeObject == null) {
             return;
         }
